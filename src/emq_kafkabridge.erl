@@ -26,7 +26,8 @@ load(Env) ->
     emqttd:hook('session.terminated', fun ?MODULE:on_session_terminated/4, [Env]),
     emqttd:hook('message.publish', fun ?MODULE:on_message_publish/2, [Env]),
     emqttd:hook('message.delivered', fun ?MODULE:on_message_delivered/4, [Env]),
-    emqttd:hook('message.acked', fun ?MODULE:on_message_acked/4, [Env]).
+    emqttd:hook('message.acked', fun ?MODULE:on_message_acked/4, [Env]),
+    io:format("KafkaBridge loaded", []).
 
 on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) ->
     io:format("client ~s connected, connack: ~w~n", [ClientId, ConnAck]),
@@ -39,7 +40,7 @@ on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _En
 on_client_subscribe(ClientId, Username, TopicTable, _Env) ->
     io:format("client(~s/~s) will subscribe: ~p~n", [Username, ClientId, TopicTable]),
     {ok, TopicTable}.
-    
+
 on_client_unsubscribe(ClientId, Username, TopicTable, _Env) ->
     io:format("client(~s/~s) unsubscribe ~p~n", [ClientId, Username, TopicTable]),
     {ok, TopicTable}.
@@ -86,5 +87,5 @@ unload() ->
     emqttd:unhook('session.terminated', fun ?MODULE:on_session_terminated/4),
     emqttd:unhook('message.publish', fun ?MODULE:on_message_publish/2),
     emqttd:unhook('message.delivered', fun ?MODULE:on_message_delivered/4),
-    emqttd:unhook('message.acked', fun ?MODULE:on_message_acked/4).
-
+    emqttd:unhook('message.acked', fun ?MODULE:on_message_acked/4),
+    io:format("KafkaBridge unloaded", []).
